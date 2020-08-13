@@ -4,7 +4,7 @@ for (i in 1:1260) {
   Sys.sleep(60)
   tictoc::toc()
   httr::authenticate(user = "MB295VIZ", password = ":U078ZS3U", type = "basic")
-  response <- httr::GET("http://app.citi-mb.mx/GTFS-RT/vehiculosPosicion", extract=TRUE)
+  response <- GET("http://app.citi-mb.mx/GTFS-RT/vehiculosPosicion", extract=TRUE, timeout(20))
   FeedMessage <- gtfsway::gtfs_realtime(response)
   lst1 <- gtfsway::gtfs_vehiclePosition(FeedMessage)
   lst2<- data.table::rbindlist(lst1)
