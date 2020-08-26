@@ -1,3 +1,4 @@
+#La hora que funciona para hacer la conversión es CST6CDT
 #Convertir de timestamp a datetime
 gtfs_rt_jul_ago<- read.csv("/Users/85412/Desktop/gtfs_rt/gtfs_rt_jul_ago.csv")
 gtfs_rt_jul_ago$TIMESTAMP<- lubridate::as_datetime(gtfs_rt_jul_ago$TIMESTAMP)
@@ -10,4 +11,5 @@ gtfs_rt_jul_ago$mes<-substr(gtfs_rt_jul_ago$TIMESTAMP, 6,7)
 gtfs_rt_jul_ago$dia<-substr(gtfs_rt_jul_ago$TIMESTAMP, 9,10)
 gtfs_rt_jul_ago$hora<-substr(gtfs_rt_jul_ago$TIMESTAMP, 12,13)
 gtfs_rt_jul_ago$minuto<-substr(gtfs_rt_jul_ago$TIMESTAMP, 15,16)
+
 
