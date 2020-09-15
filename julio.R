@@ -5,6 +5,7 @@ colnames(julio)[9] <- "LATITUDE"
 julio$LATITUDE <- stringr::str_sub(julio$LATITUDE, 10,-1)
 julio$VEHICLE <- stringr::str_sub(julio$VEHICLE, 4,-1)
 julio$as_date<- lubridate::as_date(julio$CST6CDT)
+julio$LATITUDE <- as.numeric(julio$LATITUDE)
 
 
 #Cargar el gtfs estático para unirlo con la ruta del Metrobús a la que pertenece
