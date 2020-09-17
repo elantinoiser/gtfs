@@ -25,3 +25,6 @@ gtfs_estatico$agencia <- NULL
 #Trayectoria de las unidades
 
 
+
+
+
