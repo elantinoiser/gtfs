@@ -13,5 +13,6 @@ gtfs_estatico<-sf::st_read("/Users/85412/Desktop/gtfs_estatico/gtfs_estatico.shp
 gtfs_estatico <- gtfs_estatico %>%  select(agencia, ruta, geometry) %>% filter(agencia == "METROBUS")
 gtfs_estatico$agencia <- NULL
                            
-  
+ #Identificar cantidad de id_vehicles único
 
+julio$id_vehicle <- paste0(julio$as_date, julio$VEHICLE)
