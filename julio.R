@@ -15,4 +15,4 @@ gtfs_estatico$agencia <- NULL
                            
  #Identificar cantidad de id_vehicles único
 
-julio$id_vehicle <- paste0(julio$as_date, julio$VEHICLE)
+julio$id_vehicle <- paste(julio$as_date, julio$VEHICLE, sep="-")
