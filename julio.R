@@ -31,7 +31,14 @@ df_end <- julio[rev(!duplicated(rev(julio$id_vehicle))),]#Get ending week
 start_end<- dplyr::left_join(df_start, df_end, by="id_vehicle")
 track <- as.data.frame(TrackReconstruction::CalcDistance(start_end$LATITUDE.x, start_end$LONGITUDE.x, start_end$LATITUDE.y, start_end$LONGITUDE.y))
 
+#############
+
+Nombres <- c("Juan", "Pedro", "Mayelo", "Enrique", "José", "Pedro", "Mayelo", "José")
+Valores <- c("2","9","3","5","2","4","3", "6")
+
+df <- as.data.frame(cbind(Nombres, Valores)) 
 
 
-
+df_primero <- df[!duplicated(df$Valores),]#Get starting week
+df_final <- df[rev(!duplicated(rev(df$Valores))),]#Get ending week
 
