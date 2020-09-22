@@ -25,11 +25,14 @@ julio13 <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTT
 #¿Cuántas observaciones distintas hay?
 nrow(distinct(julio13, id_vehicle))
 
-#¿Cuántas observaciones repetidas del id_vehicle==2020-07-13-1
-nrow(julio13 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date) %>% filter(id_vehicle == "2020-07-13-1"))
-julio_13_1 <- julio13 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date) %>% filter(id_vehicle == "2020-07-13-1")
-#¿cuántos casos repetidos hay del caso 2020-07-13-1??
-nrow(julio_13_1 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date) %>% filter(id_vehicle == "2020-07-13-1"))
+-
+#¿Cuántas observaciones repetidas del id_vehicle==2020-07-13-1?
+nrow(julio13 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date, as_hour) %>% filter(id_vehicle == "2020-07-13-1"))
+julio_2020_07_13_1_6 <- julio13 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date, as_hour) %>% filter(id_vehicle == "2020-07-13-1" & as_hour=="6")
+#//////Hasta aquí todo fine////////
+
+#¿cuántos casos repetidos hay del caso 2020-07-13-1-6??
+#nrow(julio_2020_07_13_1_6 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date) %>% filter(id_vehicle == "2020-07-13-1" & as_hour=="6"))
 df_start_1 <- julio_13_1[!duplicated(julio_13_1$id_vehicle),]
 df_end_1 <- julio_13_1[rev(!duplicated(rev(julio_13_1$id_vehicle))),]
 st_ed_1<- dplyr::left_join(df_start_1, df_end_1, by="id_vehicle")
@@ -37,35 +40,51 @@ st_ed_1<- dplyr::left_join(df_start_1, df_end_1, by="id_vehicle")
 
 #////Arriba todo fine//////////
 #En la siguiente sección se hace una verificación de los resultados con geosphere, trajr y TrackReconstruction
+#Ejemplo con el  caso "2020-07-13-1"
 ###Resultados con trajr basado en la vignette cran.rstudio.com/web/packages/trajr/vignettes/trajr-vignette.html
-coords <- data.frame(x = julio_13_1$LONGITUDE, 
-                     y = julio_13_1$LATITUDE, 
-                     times = julio_13_1$CST6CDT)
-
-coords <- data.frame(x = julio_13_1$LONGITUDE, 
-                     y = julio_13_1$LATITUDE, 
-                     times = julio_13_1$CST6CDT)
+coords <- data.frame(x = julio_2020_07_13_1_6$LONGITUDE, 
+                     y = julio_2020_07_13_1_6$LATITUDE, 
+                     times = julio_2020_07_13_1_6$CST6CDT)
 trj <- trajr::TrajFromCoords(coords)
 plot(trj)
+trajr::TrajStepLengths(trj)
 
+coords <- data.frame(x= c(-99.1460, -99.1439, -99.1437, -99.1444),
+                     y= c(19.4737, 19.4680, 19.4675, 19.4631),
+                     times= c(0, 1, 2, 4))
+trj <- trajr::TrajFromCoords(coords)
+plot(trj)
+trajr::TrajStepLengths(trj)
 
+#Estimación con la librería TrackReconstruction. El resultado será .67 km?
 
+TrackReconstruction::CalcDistance(19.4675, -99.1437, 19.4631, -99.1444)
+TrackReconstruction::CalcDistance(st_ed_1$LATITUDE.x, st_ed_1$LONGITUDE.x, st_ed_1$LATITUDE.y, st_ed_1$LONGITUDE.y) #en km
+TrackReconstruction::CalcBearing(st_ed_1$LATITUDE.x, st_ed_1$LONGITUDE.x, st_ed_1$LATITUDE.y, st_ed_1$LONGITUDE.y) #en km
 
-dist_6 <- as.data.frame(TrackReconstruction::CalcDistance(st_ed$LATITUDE.x, st_ed$LONGITUDE.x, st_ed$LATITUDE.y, st_ed$LONGITUDE.y))
-
-#Ejemplo con el  caso "2020-07-13-1"
 
 julio_6_1 <- julio_6 %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CST6CDT, as_date) %>% filter(id_vehicle == "2020-07-13-1")
 
+
+#El código de abajo sirve para encontrar el primer caso duplicado y el último
+#######
 df_start_1 <- julio_6_1[!duplicated(julio_6_1$id_vehicle),]
 df_end_1 <- julio_6_1[rev(!duplicated(rev(julio_6_1$id_vehicle))),]
 st_ed_1<- dplyr::left_join(df_start_1, df_end_1, by="id_vehicle")
-TrackReconstruction::CalcDistance(st_ed_1$LATITUDE.x, st_ed_1$LONGITUDE.x, st_ed_1$LATITUDE.y, st_ed_1$LONGITUDE.y) #en km
-TrackReconstruction::CalcBearing(st_ed_1$LATITUDE.x, st_ed_1$LONGITUDE.x, st_ed_1$LATITUDE.y, st_ed_1$LONGITUDE.y) #en km
-SF <- c(st_ed_1$LONGITUDE.x, st_ed_1$LATITUDE.x)
-AM <- c(st_ed_1$LONGITUDE.y, st_ed_1$LATITUDE.y)
-geosphere::distCosine(SF, AM) #En metros
-geosphere::bearing(SF, AM) #No sé en qué unidades está el resultado.
+#######
+
+#Estimación con geosphere
+P1 <- c(-99.1460, 19.4737)
+P2 <- c(-99.1439, 19.4680)
+P3 <- c(-99.1437, 19.4675)
+P4 <- c(-99.1444, 19.4631)
+P5
+P6
+P7
+geosphere::distCosine(P1, P2)#En metros
+geosphere::distCosine(P2, P3)
+geosphere::bearing(P3, P4) #No sé en qué unidades está el resultado.
+
 #############
 
 Nombres <- c("Juan", "Pedro", "Mayelo", "Enrique", "José", "Pedro", "Mayelo", "José")
