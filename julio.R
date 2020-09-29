@@ -5,10 +5,7 @@
 #######################
 #Correr desde aquí    #
 #######################
-gtfs_estatico<-sf::st_read("/Users/85412/Desktop/gtfs_estatico/gtfs_estatico.shp")
-gtfs_estatico <- gtfs_estatico %>%  select(agencia, ruta, geometry) %>% filter(agencia == "METROBUS")
-gtfs_estatico$agencia <- NULL
-plot(gtfs_estatico)
+
 #######################
 julio <- readr::read_csv("C:/Users/85412/Desktop/gtfs_rt/julio.csv")
 julio$CST6CDT <- lubridate::as_datetime(julio$TIMESTAMP, tz="CST6CDT")
@@ -28,6 +25,14 @@ unicos_13 <- unique(julio13$id_vehicle)
 ###############################
 #Correr hasta aquí, todo bien #
 ###############################
+gtfs_estatico<-sf::st_read("/Users/85412/Desktop/gtfs_estatico/gtfs_estatico.shp")
+gtfs_estatico <- gtfs_estatico %>%  select(agencia, ruta, geometry) %>% filter(agencia == "METROBUS")
+gtfs_estatico$agencia <- NULL
+plot(gtfs_estatico)
+julio13p<- sf::st_as_sf(julio13, coords = c("LONGITUDE", "LATITUDE"), crs = 4326, agr = "constant")
+julio13join <- sf::st_join(julio13p, gtfs_estatico, join = st_nn, maxdist = 100)# Debe correrse library(nngeo) para que trabaje el st_nn
+julio13jn1y2<-julio13join %>% select(., id_vehicle, geometry, CST6CDT, ruta) %>% filter(ruta=="00L1" |ruta=="00L2")
+
 #¿Cuántas observaciones distintas hay?
 nrow(distinct(julio13, id_vehicle))
 #¿Cuántas observaciones repetidas del id_vehicle==2020-07-13-1?
@@ -134,14 +139,36 @@ julio <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIM
 julio13 <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_date == "2020-07-13")
 unicos_13 <- unique(julio13$id_vehicle)
 
+#Unión espacial con el gtfs estático para conocer la ruta a la que pertenecen
+ggmap01<- ggmap::LonLat2XY(julio13$LONGITUDE, julio13$LATITUDE, zoom = TRUE)
+
+
+
 ###Este código genera 1 dataframe por id_vehicle
-for (i in julio13$id_vehicle) {
-  assign(i,data.frame(julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(., id_vehicle==i)))
+for (i in julio13jn1y2$id_vehicle) {
+  assign(i,data.frame(julio13jn1y2 %>% select(id_vehicle, geometry, CST6CDT,ruta) %>% filter(., id_vehicle==i)))
 }
-
-
 
 for (i in julio13$id_vehicle) {
   julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(., id_vehicle==i)
   nrow(i)
 }
+
+ 
+for(i in julio13$id_vehicle){
+julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
+  mutate(., lead=lead(LONGITUDE, n=1))
+}
+####Pruebas(revisar este código)
+
+juliolag <-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle=="i") %>%
+mutate(., newvariable=lag(LONGITUDE, n=2))
+
+
+juliolag<-function(i)
+  for(i in julio13$id_vehicle){
+  julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
+    mutate(., lead=lead(LONGITUDE, n=1))
+}
+
+
