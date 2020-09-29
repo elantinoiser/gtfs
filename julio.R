@@ -154,6 +154,7 @@ for (i in julio13$id_vehicle) {
   nrow(i)
 }
 
+<<<<<<< HEAD
  
 for(i in julio13$id_vehicle){
 julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
@@ -171,4 +172,25 @@ juliolag<-function(i)
     mutate(., lead=lead(LONGITUDE, n=1))
 }
 
+=======
+julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(., id_vehicle==i)
+
+####Pruebas(revisar este código)
+
+juliolagueado<-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle=="2020-07-13-771") %>%
+mutate(., newvariable=lag(LONGITUDE, n=2))
+
+
+juliolageado<<-julio13 %>% mutate(., newvariable= lag(julio13$LONGITUDE, n=2))
+
+julio_funct <- function(i,j) {
+    j<-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
+    mutate(., lat_lead=lead(LATITUDE, n=1)) %>% mutate(., lon_lead=lead(LONGITUDE, n=1)) 
+    mutate(j, dist = TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead))
+  }
+
+p <- julio_funct("2020-07-13-2")
+
+
+j$dist<- TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead)
 
