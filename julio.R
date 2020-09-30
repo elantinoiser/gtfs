@@ -154,8 +154,6 @@ for (i in julio13$id_vehicle) {
   nrow(i)
 }
 
-<<<<<<< HEAD
- 
 for(i in julio13$id_vehicle){
 julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
   mutate(., lead=lead(LONGITUDE, n=1))
@@ -182,15 +180,36 @@ mutate(., newvariable=lag(LONGITUDE, n=2))
 
 
 juliolageado<<-julio13 %>% mutate(., newvariable= lag(julio13$LONGITUDE, n=2))
-
+###############################################################################################################
 julio_funct <- function(i,j) {
     j<-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
     mutate(., lat_lead=lead(LATITUDE, n=1)) %>% mutate(., lon_lead=lead(LONGITUDE, n=1)) 
     mutate(j, dist = TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead))
-  }
+    }
 
-p <- julio_funct("2020-07-13-2")
+consuma<- julio_funct("2020-07-13-1077")
 
+length <- sum(consuma$dist, na.rm = TRUE)
 
-j$dist<- TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead)
+range<- range(consuma$CST6CDT)
+diftiempo<- as.data.frame(range[2] - range[1])
 
+################################################################################################################
+
+julio_funct <- function(i,j) {
+  j<-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
+    mutate(., lat_lead=lead(LATITUDE, n=1)) %>% mutate(., lon_lead=lead(LONGITUDE, n=1)) 
+  mutate(j, dist = TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead))
+}
+
+julio_for<- for (i in julio13$id_vehicle) {
+  julio_funct("i")
+  length <- sum(consuma$dist, na.rm = TRUE)
+  range<- range(consuma$CST6CDT)
+  diftiempo<- as.data.frame(range[2] - range[1])
+    
+}
+
+julio_for <- list(for (i in julio13$id_vehicle) {
+  julio_funct(i)
+})
