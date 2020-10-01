@@ -196,7 +196,11 @@ diftiempo<- as.data.frame(range[2] - range[1])
 
 ################################################################################################################
 
+<<<<<<< HEAD
 julio_fun <- function(i,j) {
+=======
+julio_funct <- function(i,j) {
+>>>>>>> 01d99d4b1fa5d895bae0b1f2b5c2f33ced321a2b
   j<-julio13 %>% select(id_vehicle, LATITUDE, LONGITUDE, CST6CDT) %>% filter(julio13$id_vehicle==i) %>%
     mutate(., lat_lead=lead(LATITUDE, n=1)) %>% mutate(., lon_lead=lead(LONGITUDE, n=1)) 
   mutate(j, dist = TrackReconstruction::CalcDistance(j$LATITUDE, j$LONGITUDE, j$lat_lead, j$lon_lead))
@@ -217,6 +221,7 @@ for (i in julio13$id_vehicle) {
   assign (i, data.frame(julio_funct(i)))
 }
 
+<<<<<<< HEAD
 
 assign ("Lista", list(append(julio_funct(i))))
 
@@ -678,3 +683,8 @@ jul_13$hrs <- jul_13$X2-jul_13$X1
 
 
 
+=======
+julio_for <- list(for (i in julio13$id_vehicle) {
+  julio_funct(i)
+})
+>>>>>>> 01d99d4b1fa5d895bae0b1f2b5c2f33ced321a2b
