@@ -32,6 +32,7 @@ jul_13_jn <- cbind(jul_13_jn, jul_13_coords)
 
 #4to paso: función que mida...
 
+<<<<<<< HEAD
 jul_fun <- function(i,j) {
   j<-jul_13_jn %>% select(id_vehicle, Y, X, CST6CDT) %>% filter(jul_13_jn$id_vehicle==i) %>%
   mutate(., y_lead=lead(Y, n=1)) %>% mutate(., x_lead=lead(X, n=1)) 
@@ -388,3 +389,5 @@ jul_13$horas <- as.numeric(jul_13$horas)
 jul_13$velocidad <- jul_13$distancia/jul_13$horas
 names(jul_13) <- c("id_vehicle", "distancia", "t1", "t2", "tiempo", "velocidad")
 write.csv(jul_13, "/Users/85412/Desktop/gtfs_rt/julio/jul_13.csv")
+=======
+>>>>>>> 466d3929b9a391be6c481a507a6b9a7b4bb48d75
