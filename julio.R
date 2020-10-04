@@ -246,6 +246,7 @@ sapply(mylist, function(x) range(x$CST6CDT, na.rm = TRUE)) %>% range[2] - range[
 
 unicos <- as.data.frame(unicos)
 
+mylist_ = mget(ls(pattern = "2020-07-13-")) # con este comando agrega los dataframes con un patrón a la lista
 mylist <- list(`2020-07-13-169`
                ,`2020-07-13-57`
                ,`2020-07-13-178`

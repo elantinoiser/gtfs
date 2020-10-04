@@ -34,7 +34,7 @@ jul_13_jn <- cbind(jul_13_jn, jul_13_coords)
 
 jul_fun <- function(i,j) {
   j<-jul_13_jn %>% select(id_vehicle, Y, X, CST6CDT) %>% filter(jul_13_jn$id_vehicle==i) %>%
-  mutate(., y_lead=lead(Y, n=1)) %>% mutate(., x_lead=lead(X, n=1)) 
+    mutate(., y_lead=lead(Y, n=1)) %>% mutate(., x_lead=lead(X, n=1)) 
   mutate(j, dist = TrackReconstruction::CalcDistance(j$Y, j$X, j$y_lead, j$x_lead))
 }
 
