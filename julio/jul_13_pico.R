@@ -26,40 +26,64 @@ gtfs_estatico <- gtfs_estatico %>%  select(agencia, ruta, geometry) %>% filter(a
 gtfs_estatico$agencia <- NULL
 jul_13p<- sf::st_as_sf(jul_13, coords = c("LONGITUDE", "LATITUDE"), crs = 4326, agr = "constant")
 jul_13_jn <- sf::st_join(jul_13p, gtfs_estatico, join = nngeo::st_nn, maxdist = 100)# Debe correrse library(nngeo) para que trabaje el st_nn
+<<<<<<< HEAD
 jul_13_jn <-jul_13_jn %>% select(., id_vehicle, geometry, CST6CDT, ruta) %>% filter(ruta=="00L1" |ruta=="00L2")
 jul_13_coords<- sf::st_coordinates(jul_13_jn)
 jul_13_jn <- cbind(jul_13_jn, jul_13_coords)
+=======
+jul_20_jn <-jul_20_jn %>% select(., id_vehicle, geometry, CST6CDT, ruta) %>% filter(ruta=="00L1" |ruta=="00L2")
+jul_20_coords<- sf::st_coordinates(jul_20_jn)
+jul_20_jn <- cbind(jul_20_jn, jul_20_coords)
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
 
 #4to paso: función que mida...
 
 jul_fun <- function(i,j) {
+<<<<<<< HEAD
   j<-jul_13_jn %>% select(id_vehicle, Y, X, CST6CDT) %>% filter(jul_13_jn$id_vehicle==i) %>%
+=======
+  j<-jul_20_jn %>% select(id_vehicle, Y, X, CST6CDT) %>% filter(jul_20_jn$id_vehicle==i) %>%
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
     mutate(., y_lead=lead(Y, n=1)) %>% mutate(., x_lead=lead(X, n=1)) 
   mutate(j, dist = TrackReconstruction::CalcDistance(j$Y, j$X, j$y_lead, j$x_lead))
 }
 
 #5to paso... 
 
+<<<<<<< HEAD
 for (i in jul_13_jn$id_vehicle) {
+=======
+for (i in jul_20_jn$id_vehicle) {
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
   assign (i, data.frame(jul_fun(i)))
 }
 
 #6to paso
 
+<<<<<<< HEAD
 unicos <- as.data.frame(unique(jul_13_jn$id_vehicle))
 unicos<- unicos[with(unicos, order(unicos$`unique(jul_13_jn$id_vehicle)`)), ]
+=======
+unicos <- as.data.frame(unique(jul_20_jn$id_vehicle))
+unicos<- unicos[with(unicos, order(unicos$`unique(jul_20_jn$id_vehicle)`)), ]
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
 
 #write.csv(unicos, "C:/Users/85412/Desktop/unicos.csv")
 
 
 #Séptimo paso. 
 
+<<<<<<< HEAD
 lista <- mget(ls(pattern = "2020-07-13-")) # con este comando agrega los dataframes con un patrón a la lista
+=======
+lista <- mget(ls(pattern = "2020-07-20-")) # con este comando agrega los dataframes con un patrón a la lista
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
 
 suma <- as.data.frame(sapply(lista, function(x) sum(x$dist, na.rm = TRUE)))
 rango <- sapply(lista, function(x) range(x$CST6CDT, na.rm = TRUE)) 
 rango_t <- data.frame(t(rango))
 
+<<<<<<< HEAD
 jul_13 <- cbind(unicos, suma)
 jul_13 <- cbind(jul_13, rango_t)
 
@@ -72,3 +96,17 @@ jul_13$hrs <- as.numeric(jul_13$hrs)
 jul_13$velocidad <- jul_13$`sapply(lista, function(x) sum(x$dist, na.rm = TRUE))`/jul_13$hrs
 names(jul_13) <- c("id_vehicle", "distancia", "t1", "t2", "tiempo", "velocidad")
 write.csv(jul_13, "/Users/85412/Desktop/gtfs_rt/julio/jul_13_pico.csv")
+=======
+jul_20 <- cbind(unicos, suma)
+jul_20 <- cbind(jul_20, rango_t)
+
+jul_20$hrs<- lubridate::as_datetime(jul_20$X2) - lubridate::as_datetime(jul_20$X1)
+jul_20$hrs <- jul_20$hrs/60/60
+
+#Octavo paso.
+
+jul_20$hrs <- as.numeric(jul_20$hrs)
+jul_20$velocidad <- jul_20$`sapply(lista, function(x) sum(x$dist, na.rm = TRUE))`/jul_20$hrs
+names(jul_20) <- c("id_vehicle", "distancia", "t1", "t2", "tiempo", "velocidad")
+write.csv(jul_20, "/Users/85412/Desktop/gtfs_rt/julio/jul_20.csv")
+>>>>>>> 50d2a1e8ab49776e47e6f73aca117fe7cad6635c
