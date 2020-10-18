@@ -1,19 +1,44 @@
 setwd("/Users/85412/Desktop/estaciones_ohiiunam/julio")
 temp = list.files(pattern="*.csv")
-myfiles = lapply(temp, read.csv)
+lista = lapply(temp, read.csv)
 
-Fecha.hora <- lapply(myfiles, function(x) substr (x$Fecha.hora,1,10)) 
-
-
-myfiles2<- lapply(myfiles, transform, Fecha.hora = as.character(Fecha.hora)[1])
+Fecha.hora <- lapply(lista, function(x) substr (x$Fecha.hora,1,2)) 
 
 
-#Sí funcionó
-summarized_list <- lapply(myfiles,  function(i) {
+lista2<- lapply(lista, transform, Fecha.hora = as.character(Fecha.hora))
 
-i %>% group_by(Fecha.hora) %>% summarize(mean(precip))
+lista3 <- lapply(lista2, transform, fecha = substr (Fecha.hora,1,2))
+lista3 <- lapply(lista3, transform, fecha = as.character(fecha))
 
+new_col_name <- c("estacion", "fecha.hora", "intensidad.mm.h", "acumulada", "fecha")
+
+lista3<- lapply(lista3, setNames, nm = new_col_name)
+
+lista3.mean <- lapply(lista3,  function(i) {
+  
+  i %>% group_by(fecha) %>% summarize(mean(intensidad.mm.h))
+  
 })
+
+
+
+
+
+lista4 <- lapply(lista2, transform, fecha = substr (Fecha.hora,1,10))
+
+lista4 <- lapply(lista4, transform, fecha= as.character(fecha))
+
+lista5 <- lapply(lista4, transform, hora = substr (Fecha.hora,12,13))
+
+lista5 <- lapply(lista4, transform, hora= as.character(hora))
+
+
+
+
+
+prec_agre <- stats::aggregate(acopilco_202007,
+                              by = list(acopilco_202007$dia, acopilco_202007$hora),
+                              FUN = mean)
 
 
 acopilco_202007$dia<- substr(acopilco_202007$`Fecha/hora`,9,10)
@@ -23,9 +48,7 @@ acopilco_202007$diayhora <- paste0(acopilco_202007$dia, acopilco_202007$hora)
 
 #Sí funcionó
 
-prec_agre <- stats::aggregate(acopilco_202007,
-                by = list(acopilco_202007$dia, acopilco_202007$hora),
-                FUN = mean)
+
 
 unicos_dia <- unique(acopilco_202007$dia)
 unicos_hora <- unique(acopilco_202007$hora)
