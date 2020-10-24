@@ -27,17 +27,26 @@ lista3.mean <- lapply(lista3,  function(i) {
   
 })
 #
-df.lista3.rbind <- rbind_list(lista3.mean)
+df.lista3.rbind <- rbind_list(lista3.mean)#voy aquí
 names(df.lista3.rbind) <- c("id", "intensidad.mm.h")
 #
 percentiles<- df.lista3.rbind %>% select(id, intensidad.mm.h) %>% filter(intensidad.mm.h>0)
 quantile(percentiles$intensidad.mm.h, probs = c(0, 0.95), na.rm=TRUE)
 #
+df.lista3.rbind$nom <- substr(df.lista3.rbind$id, 1,3)
 df.lista3.rbind$dia <- substr(df.lista3.rbind$id, 4,5)
+df.lista3.rbind$hora <- substr(df.lista3.rbind$id, 6,7)
 #Aquí me acabo de dar cuenta de que tengo muchos dias 0s
 df.lista3.rbind$dia <- as.numeric(df.lista3.rbind$dia)
 #
 df.l3 <- df.lista3.rbind[ which(df.lista3.rbind$dia > 12), ]
+df.l3$dia <- as.character(df.l3$dia) 
+#
+class(df.l3$intensidad.mm.h)
+df.l3 %>% group_by(dia) %>% summarize(sum(intensidad.mm.h))
+
+
+
 
 
 

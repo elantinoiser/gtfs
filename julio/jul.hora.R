@@ -14,7 +14,7 @@ julio$id_vehicle <- paste(julio$as_date, sep="-", julio$VEHICLE)
 #2do paso: se extraen los datos correspondientes al día con el que se trabajará.
 
 #Datos de las 6 a las 23 horas
-julio <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_hour == "6")
+julio <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_hour == "8")
 #Datos del 20 de julio
 jul_20 <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_date == "2020-07-20")
 
@@ -31,7 +31,9 @@ jul_20_jn <-jul_20_jn %>% select(., id_vehicle, geometry, CST6CDT, ruta) %>% fil
 jul_20_coords<- sf::st_coordinates(jul_20_jn)
 jul_20_jn <- cbind(jul_20_jn, jul_20_coords)
 
-#4to paso: función que mida...
+#4to paso: función con la que se construyen las trayectorias
+
+start.time <- Sys.time()
 
 jul_fun <- function(i,j) {
   j<-jul_20_jn %>% select(id_vehicle, Y, X, CST6CDT) %>% filter(jul_20_jn$id_vehicle==i) %>%
@@ -39,19 +41,18 @@ jul_fun <- function(i,j) {
   mutate(j, dist = TrackReconstruction::CalcDistance(j$Y, j$X, j$y_lead, j$x_lead))
 }
 
-#5to paso... 
+#5to paso, loop que utiliza la función anterior
 
 for (i in jul_20_jn$id_vehicle) {
   assign (i, data.frame(jul_fun(i)))
 }
 
+end.time <- Sys.time()
+
 #6to paso
 
 unicos <- as.data.frame(unique(jul_20_jn$id_vehicle))
 unicos<- unicos[with(unicos, order(unicos$`unique(jul_20_jn$id_vehicle)`)), ]
-
-#write.csv(unicos, "C:/Users/85412/Desktop/unicos.csv")
-
 
 #Séptimo paso. 
 
@@ -72,4 +73,4 @@ jul_20$hrs <- jul_20$hrs/60/60
 jul_20$hrs <- as.numeric(jul_20$hrs)
 jul_20$velocidad <- jul_20$`sapply(lista, function(x) sum(x$dist, na.rm = TRUE))`/jul_20$hrs
 names(jul_20) <- c("id_vehicle", "distancia", "t1", "t2", "tiempo", "velocidad")
-write.csv(jul_20, "/Users/85412/Desktop/gtfs_rt/julio/jul_20_6.csv")
+write.csv(jul_20, "/Users/85412/Desktop/gtfs_rt/julio/jul.20.7.csv")
