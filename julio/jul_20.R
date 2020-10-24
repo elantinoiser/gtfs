@@ -14,9 +14,10 @@ julio$id_vehicle <- paste(julio$as_date, julio$VEHICLE, sep="-")
 #2do paso: se extraen los datos correspondientes al día con el que se trabajará.
 
 #Datos de las 6 a las 23 horas
-julio <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_hour == "6" | as_hour=="7" | as_hour=="8" | as_hour=="9"| as_hour=="10" | as_hour=="11"| as_hour=="12"| as_hour=="13"| as_hour=="14"| as_hour=="15"| as_hour=="16"| as_hour=="17"| as_hour=="18"| as_hour=="19" | as_hour=="20"| as_hour=="21"| as_hour=="22"| as_hour=="23")
-#Datos del 19 de julio
+julio <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_hour == "7")
+#Datos del 20 de julio
 jul_20 <- julio %>%  select(id_vehicle, Id, TIMESTAMP, VEHICLE, ROUTEID, STARTTIME, STARTDATE, SCHEDULE_RELATIONSHIP, LABEL, LATITUDE, LONGITUDE, BEARING, ODOMETER, SPEED, CURRENTSTATUS, LECTURA, CST6CDT, as_date, as_hour) %>% filter(as_date == "2020-07-20")
+
 
 #3er paso: unión espacial.
 
@@ -71,4 +72,4 @@ jul_20$hrs <- jul_20$hrs/60/60
 jul_20$hrs <- as.numeric(jul_20$hrs)
 jul_20$velocidad <- jul_20$`sapply(lista, function(x) sum(x$dist, na.rm = TRUE))`/jul_20$hrs
 names(jul_20) <- c("id_vehicle", "distancia", "t1", "t2", "tiempo", "velocidad")
-write.csv(jul_20, "/Users/85412/Desktop/gtfs_rt/julio/jul_20.csv")
+write.csv(jul_20, "/Users/85412/Desktop/gtfs_rt/julio/jul_20_6.csv")
