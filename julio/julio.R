@@ -39,90 +39,100 @@ julio.jn$geometry <- NULL
 
 julio.jn %>% select(timestamp, vehicle, speed, ruta, X, Y, timestamp.day, timestamp.hour) %>% filter("2020-07-13 00:00"==as.POSIXct(julio.jn$timestamp))
 
+#########33
+############3
+###LO ANTERIOR TIENE QUE VER CON LA UNIÓN ESPACIAL CON EL GTFS ESTÁTICO############
 #####DESDE AQUÍ#######
+
+#Check. Carga de archivos con los que se trabajará.
+
 julio.sp.jn.l1 <- read.csv("C:/Users/85412/Desktop/julio.sp.jn.l1.csv") 
 names(julio.sp.jn.l1) <- c("timestamp", "vehicle", "speed", "x", "y", "ruta")
 julio.sp.jn.l1$x <- substr(julio.sp.jn.l1$x, 3, 10) 
 julio.sp.jn.l1$y <- substr(julio.sp.jn.l1$y, 1, 8) 
-
 julio.sp.jn.l1$timestamp <- as.POSIXct(julio.sp.jn.l1$timestamp)
 julio.sp.jn.l1$x <- as.numeric(julio.sp.jn.l1$x)
 julio.sp.jn.l1$y <- as.numeric(julio.sp.jn.l1$y)
-
 jul.l1 <- julio.sp.jn.l1
 
-####
-#For para generar dataframes diarios
+#Check. Creación de un dataframe diario.
 
 for (i in 15:31) {
   assign(paste0("jul", sep=".", i), data.frame(jul.l1 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::day(jul.l1$timestamp)==i)))  
 }
 
-###Seleccionar por día y hora
+#
 
-jul.l1 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::day(jul.l1$timestamp)==15 & lubridate::hour(jul.l1$timestamp)==6) 
+#Check. Se usan estas funciones para obtener los camiones que particpan en las rutas diarias
 
+jul_fun <- function(i) {
+  jul.15 %>% select(timestamp, vehicle, speed, x, y, ruta) %>% filter(vehicle==i)
+}
 
-##Función para seleccionr por día y hora
+for (i in jul.15$vehicle) {
+  assign (paste0("vehi", sep=".", i), data.frame(jul_fun(i)))
+}
+
+#Check.Agregar las trayectorias a una lista. Para la verificación deben coincidir el número de elementos de la lista con el número de valores únicos de la variable vehicle. 
+
+lista <- mget(ls(pattern = "vehi.")) # con este comando agrega los dataframes con un patrón a la lista
+unique(jul.15$vehicle)
+#uso de for  con una lista
+for(i in 1:2) print(lista[i])
+
+#Check. Teniendo las trayectorias en una lista.
+
+lista <- lapply(lista, function(x) mutate(x, y.lead=lead(y, n=1)))
+lista <- lapply(lista, function(x) mutate(x, x.lead=lead(x, n=1)))
+lista <- lapply(lista, function (j) mutate(j, dist = TrackReconstruction::CalcDistance(j$y, j$x, j$y.lead, j$x.lead)))#Da la distancia en kilómetros
+
+for(i in 10:15) print(lista[i])
+
+suma <- as.data.frame(sapply(lista, function(x) sum(x$dist, na.rm = TRUE)))
+rango <- sapply(lista, function(x) range(x$timestamp, na.rm = TRUE)) 
+rango_t <- data.frame(t(rango))
+dura <- lubridate::as_datetime(rango_t$X2) - lubridate::as_datetime(rango_t$X1)
+dura <- dura/60/60
+
+final <- cbind(suma, rango_t)
+final <- cbind(final, dura)
+
+###Se le aplican las sumatorias
+
+##Check. Función para seleccionr por día y hora.
 
 jul.fun <- function(i, j){
-  
   jul.l1 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::day(jul.l1$timestamp)==i & lubridate::hour(jul.l1$timestamp)==j) 
-  
 }
-  
-jul.fun(15,7)
 
+#ejemplos  
+tail(jul.fun(18,c(6:23)))
+
+#Hacen lo mismo
+jul.19.6 <- jul.fun(19,6)
+assign("jul.19.6",data.frame(jul.fun(19,6)))
+
+####Hasta aquí vamos bien, pero recordar que estoy usando solamente la mitad de la distribución
+#Ejemplos
+
+jul.15 <- jul.fun(15,6)
 jul.15.6 <- jul.fun(15,6)
-jul.15.7 <- jul.fun(15,7)
-jul.15.8 <- jul.fun(15,8)
-jul.15.9 <- jul.fun(15,9)
-jul.15.10 <- jul.fun(15,10)
-jul.15.11 <- jul.fun(15,11)
-jul.15.12 <- jul.fun(15,12)
-jul.15.13 <- jul.fun(15,13)
-jul.15.14 <- jul.fun(15,14)
-jul.15.15 <- jul.fun(15,15)
-jul.15.16 <- jul.fun(15,16)
-jul.15.17 <- jul.fun(15,17)
-jul.15.18 <- jul.fun(15,18)
-jul.15.19 <- jul.fun(15,19)
-jul.15.20 <- jul.fun(15,20)
-jul.15.21 <- jul.fun(15,21)
-jul.15.22 <- jul.fun(15,22)
-jul.15.23 <- jul.fun(15,23)
 
-### Aplicar para cada hora
-
-
-for (i in unique(jul.15.6$vehicle)) {
-  j <- jul.15.6 %>% select(timestamp, vehicle, speed, x, y, ruta) %>% filter(jul.15.6$vehicle==i) %>% mutate(., y.lead=lead(y, n=1)) %>% mutate(., x.lead=lead(x, n=1)) 
-  mutate(j, dist = TrackReconstruction::CalcDistance(j$y, j$x, j$y.lead, j$x.lead))
-}
-  
+#Check
 
 
 
-for (i in 6:23){
-  
-  jul.fun(15, i)
-  print(i)
+
+#Por hora
+#¿Es posible aplicar la siguiente función para archivos con las trayectorias por hora?
+
+jul_fun <- function(k){
+  jul.15.6 %>% select(timestamp, vehicle, speed, x, y, ruta) %>% filter(vehicle==k)
+} 
+
+for (k in jul.15.6$vehicle) {
+  assign (paste0("vehi", sep=",", i), data.frame(jul_fun(k)))
 }
 
 
-######
-
-
-lst.jul <- mget(ls(pattern = "jul.")) # con este comando agrega los dataframes con un patrón a la lista
-lst.jul[[19]] <- NULL
-lst.jul[[18]] <- NULL
-###
-jul.15$hora <- lubridate::hour(jul.15$timestamp)  
-jul.15$id.vehicle <- paste(jul.15$vehicle, jul.15$hora)
-
-##cORRER DE 6 A 23 PARA CADA DÍA####
-for (i in 6:23) {
-  assign(paste0("jul.", i), data.frame(jul.15 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::hour(jul.15$timestamp)==i)))  
-}
-
-
+#####Lo que sigue debe ser con lapply y funciones parecidas
