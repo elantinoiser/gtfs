@@ -44,7 +44,11 @@ julio.jn %>% select(timestamp, vehicle, speed, ruta, X, Y, timestamp.day, timest
 ###LO ANTERIOR TIENE QUE VER CON LA UNIÓN ESPACIAL CON EL GTFS ESTÁTICO############
 #####DESDE AQUÍ#######
 
+<<<<<<< HEAD
 #Check. Carga de archivos con los que se trabajará.
+=======
+#Check
+>>>>>>> 2237753027f08531092d8f063d4e7ec5d5d91cd8
 
 julio.sp.jn.l1 <- read.csv("C:/Users/85412/Desktop/julio.sp.jn.l1.csv") 
 names(julio.sp.jn.l1) <- c("timestamp", "vehicle", "speed", "x", "y", "ruta")
@@ -55,12 +59,17 @@ julio.sp.jn.l1$x <- as.numeric(julio.sp.jn.l1$x)
 julio.sp.jn.l1$y <- as.numeric(julio.sp.jn.l1$y)
 jul.l1 <- julio.sp.jn.l1
 
+<<<<<<< HEAD
 #Check. Creación de un dataframe diario.
+=======
+#Check
+>>>>>>> 2237753027f08531092d8f063d4e7ec5d5d91cd8
 
 for (i in 15:31) {
   assign(paste0("jul", sep=".", i), data.frame(jul.l1 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::day(jul.l1$timestamp)==i)))  
 }
 
+<<<<<<< HEAD
 #
 
 #Check. Se usan estas funciones para obtener los camiones que particpan en las rutas diarias
@@ -72,6 +81,22 @@ jul_fun <- function(i) {
 for (i in jul.15$vehicle) {
   assign (paste0("vehi", sep=".", i), data.frame(jul_fun(i)))
 }
+=======
+#Check. Se usan estas funciones para obtener los camiones que particpan en las rutas diarias
+
+jul_fun <- function(i) {
+  jul.15 %>% select(timestamp, vehicle, speed, x, y, ruta) %>% filter(vehicle==i)
+}
+
+for (i in jul.15$vehicle) {
+  assign (paste0("vehi", sep=".", i), data.frame(jul_fun(i)))
+}
+
+#####
+
+
+
+>>>>>>> 2237753027f08531092d8f063d4e7ec5d5d91cd8
 
 #Check.Agregar las trayectorias a una lista. Para la verificación deben coincidir el número de elementos de la lista con el número de valores únicos de la variable vehicle. 
 
@@ -104,6 +129,7 @@ final <- cbind(final, dura)
 jul.fun <- function(i, j){
   jul.l1 %>%  select(timestamp, vehicle, speed, x, y, ruta) %>% filter (lubridate::day(jul.l1$timestamp)==i & lubridate::hour(jul.l1$timestamp)==j) 
 }
+<<<<<<< HEAD
 
 #ejemplos  
 tail(jul.fun(18,c(6:23)))
@@ -111,12 +137,33 @@ tail(jul.fun(18,c(6:23)))
 #Hacen lo mismo
 jul.19.6 <- jul.fun(19,6)
 assign("jul.19.6",data.frame(jul.fun(19,6)))
+=======
+#ejemplos  
+tail(jul.fun(15,c(6:23)))
+jul.19.6 <- jul.fun(19,6)
+
+assign("jul.19.6",data.frame(jul.fun(19,6)))
+
+
+
 
 ####Hasta aquí vamos bien, pero recordar que estoy usando solamente la mitad de la distribución
 #Ejemplos
 
 jul.15 <- jul.fun(15,6)
 jul.15.6 <- jul.fun(15,6)
+
+#Check
+>>>>>>> 2237753027f08531092d8f063d4e7ec5d5d91cd8
+
+####Hasta aquí vamos bien, pero recordar que estoy usando solamente la mitad de la distribución
+#Ejemplos
+
+<<<<<<< HEAD
+jul.15 <- jul.fun(15,6)
+jul.15.6 <- jul.fun(15,6)
+=======
+>>>>>>> 2237753027f08531092d8f063d4e7ec5d5d91cd8
 
 #Check
 
@@ -134,5 +181,9 @@ for (k in jul.15.6$vehicle) {
   assign (paste0("vehi", sep=",", i), data.frame(jul_fun(k)))
 }
 
+#Agregar las trayectorias a una lista. Para la verificación deben coincidir el número de elementos de la lista con el número de valores únicos de la variable vehicle. 
+
+lista <- mget(ls(pattern = "vehi.")) # con este comando agrega los dataframes con un patrón a la lista
+unique(jul.15.6$vehicle)
 
 #####Lo que sigue debe ser con lapply y funciones parecidas
