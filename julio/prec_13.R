@@ -8,9 +8,12 @@ lista = lapply(temp, read.csv)
 lista2<- lapply(lista, transform, Fecha.hora = as.character(Fecha.hora))
 #Cambio de nombres
 new_col_name <- c("estacion", "fecha.hora", "intensidad.mm.h", "acumulada")
+names(lista2) <- c("estacion", "fecha.hora", "intensidad.mm.h", "acumulada")
+
 lista2<- lapply(lista2, setNames, nm = new_col_name)
 lista2 <- lapply(lista2, transform, estacion = as.character(estacion))
 lista2 <- lapply(lista2, transform, fecha.hora = as.character(fecha.hora))
+summary(lista2[[34]]$intensidad.mm.h)
 #
 lista3 <- lapply(lista2, transform, nombre = substr(estacion, 1,3))
 lista3 <- lapply(lista3, transform, fecha = substr (fecha.hora,1,2))
@@ -43,7 +46,7 @@ df.l3 <- df.lista3.rbind[ which(df.lista3.rbind$dia > 12), ]
 df.l3$dia <- as.character(df.l3$dia) 
 #
 class(df.l3$intensidad.mm.h)
-df.l3 %>% group_by(dia) %>% summarize(sum(intensidad.mm.h))
+df.l3 %>% group_by(dia) %>% summarize(sum(intensidad.mm.h, na.rm = TRUE))
 
 
 
@@ -51,7 +54,7 @@ df.l3 %>% group_by(dia) %>% summarize(sum(intensidad.mm.h))
 
 
 
-lista3 <- lapply(lista3, transform, nom = substr() )
+lista3 <- lapply(lista3, function(x), nom = substr(x$estacion, 4,5) )
 
 
 lista3.id.fecha <- lapply(lista3, function(x) id.fecha=paste0(x$estacion,x$fecha))

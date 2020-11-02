@@ -1,5 +1,8 @@
-julio.sp.jn.l1 <- read.csv("C:/Users/85412/Desktop/julio.sp.jn.l1.csv") 
+jul.jn <- read.csv("C:/Users/85412/Downloads/jul.jn.csv") 
+jul.jn <- jul.jn %>% select(Id, TIMESTAMP, SPEED, LECTURA, geometry, ruta) %>% filter(ruta=="00L1" | ruta=="00L2")
+
 names(julio.sp.jn.l1) <- c("timestamp", "vehicle", "speed", "x", "y", "ruta")
+
 julio.sp.jn.l1$x <- substr(julio.sp.jn.l1$x, 3, 10) 
 julio.sp.jn.l1$y <- substr(julio.sp.jn.l1$y, 1, 8) 
 julio.sp.jn.l1$timestamp <- as.POSIXct(julio.sp.jn.l1$timestamp)

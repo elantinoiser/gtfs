@@ -1,7 +1,7 @@
 #Cargamos la mitad de la distribución de las observaciones que hay de la línea 1 entre el 13 y el 31 de julio.
 
 jul.jn <- read.csv("C:/Users/85412/Downloads/jul.jn.csv")
-jul.jn <- jul.jn %>% select(Id, TIMESTAMP,LABEL, LECTURA, ruta) %>% filter(ruta=="00L1")
+jul.jn <- jul.jn %>% select(Id, TIMESTAMP,LABEL, LECTURA, ruta) %>% filter(ruta=="00L2")
 names(jul.jn) <- c("timestamp", "vehicle", "y", "x", "ruta")
 #
 jul.jn$timestamp <- lubridate::as_datetime(jul.jn$timestamp, tz="CST6CDT")
@@ -57,14 +57,16 @@ cbind<- cbind %>% select(X1, X2, suma, dura, x2, x1, velo, rnames, dia, hora) %>
 #
 sum.cbind <- cbind %>% group_by(dia, hora) %>% summarize(mean(velo, na.rm=TRUE))
 #
-write.csv(sum.cbind, "C:/Users/85412/Desktop/sum.cbind.csv")
+write.csv(sum.cbind, "C:/Users/85412/Desktop/sum.cbind.2.csv")
 #
 plot(cbind$velo, na.rm =TRUE)
-unname(quantile(cbind$velo, .9, na.rm = TRUE))
+unname(quantile(cbind$velo, 1, na.rm = TRUE))
 sd(cbind$velo, na.rm = TRUE)
 mean(cbind$velo, na.rm = TRUE)
 median(cbind$velo, na.rm = TRUE)
 range(cbind$velo, na.rm = TRUE)
-curve(dnorm(x, mean(z, na.rm = T), sd(z, na.rm = T)),
-      xlim = c(-70, 200))
+hist(cbind$velo)
+ggplot(cbind, aes(velo)) + geom_histogram()
+
+
 
