@@ -33,7 +33,7 @@ lista01 <- lapply(lista01, function(x) mutate(x, y.l=lead(y, n=1)))
 lista01 <- lapply(lista01, function(x) mutate(x, x.l=lead(x, n=1)))
 lista01 <- lapply(lista01, function (j) mutate(j, dist = TrackReconstruction::CalcDistance(j$y, j$x, j$y.l, j$x.l)))#Da la distancia en kilómetros
 
-#Agregado de distancias recorridas a nivel mensual
+#Agregado de distancias recorridas por hora
 
 suma <- sapply(lista01, function(x) sum(x$dist, na.rm = TRUE))
 rango <- sapply(lista01, function(x) range(x$timestamp, na.rm = TRUE)) 
