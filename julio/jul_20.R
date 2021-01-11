@@ -1,3 +1,7 @@
+#verificar si se actualiza
+
+
+
 #1er paso: se carga la base de datos mensual y se le da formato a las variables
 #para poder trabajar con ellas.
 
