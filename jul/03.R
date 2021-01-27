@@ -29,16 +29,13 @@ jul.jn <- jul.jn %>% select(timestamp, vehicle, x, y, cst6cdt, day, hour) %>% fi
 
 
 #Union de la base jul.jn con las líneas de Metrobus. Desde aquí vamos preparando el código para quedarnos con la línea 1. 
-Sys.time()
 jul.jn <- sf::st_as_sf(jul.jn, coords = c("x", "y"), crs = 4326, agr = "constant") #Convertir la base jul.jn en una con campo geométrico.
 est.l1 <- sf::st_join(jul.jn, lineas.metrobus, join = sf::st_nearest_feature, left = T)
-Sys.time()
 
-#Separar claves de Metrobus para poder seleccionar la línea 1. Seleccionar línea 1.
-Sys.time()
+#Separar claves de Metrobus para poder seleccionar la linea 1. Seleccionar linea 1.
 est.l1$l.mbus <- substr(est.l1$name, 1, 4)
 est.l1<- est.l1 %>% select(timestamp, vehicle, cst6cdt, name, nombre, geometry, l.mbus) %>% filter(l.mbus=="MB01")
-Sys.time()
+
 
 Sys.time()
 #Unir con las estaciones de la línea 1. Las estaciones de la ruta 1 las estimé en un paso previo.
