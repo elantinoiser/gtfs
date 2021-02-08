@@ -15,5 +15,7 @@ l1.mbus.est$nombre<- stringr::str_replace(l1.mbus.est$nombre, "NÃ¡poles", "Nap
 l1.mbus.est$nombre<- stringr::str_replace(l1.mbus.est$nombre, "Santa Ãšrsula", "Santa Ursula")
 l1.mbus.est$nombre<- stringr::str_replace(l1.mbus.est$nombre, "RÃ­o Churubusco", "Rio Churubusco")
 l1.mbus.est$nombre<- stringr::str_replace(l1.mbus.est$nombre, "Villa OlÃ­mpica", "Villa Olimpica")
+l1.mbus.est$nombre<- stringr::str_replace(l1.mbus.est$nombre, "JosÃ© MarÃ­a Velasco", "Jose Maria Velasco")
 
-sf::st_write(l1.mbus.est, "D:/Escritorio/gtfs_estatico/l1.mbus.est.shp")
+
+sf::st_write(l1.mbus.est, "D:/Escritorio/gtfs_estatico/l1.mbus.est03.shp")
