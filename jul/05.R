@@ -72,3 +72,5 @@ linea1.1 <- sf::st_linestring(rbind(c(-99.1691, 19.2793),c(-99.1700, 19.2803), c
 linea1.1.2<- sf::st_sfc(linea1.1, linea1.2)
 linea1.1.2 = linea1.1.2 %>% sf::st_set_crs(4326) %>% sf::st_transform(32214)
 linea1.1.2
+
+plot(sf::st_multilinestring(list(linea1.1, linea1.2)))
