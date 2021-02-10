@@ -1,7 +1,7 @@
 #Establecimiento del directorio de trabajo
-setwd("/Users/85412/Desktop/estaciones_ohiiunam/julio")
+setwd("D:/Escritorio/estaciones_ohiiunam/julio")
 #Agregar archivos .csv
-temp = list.files(pattern="*.csv")
+temp <- list.files(pattern="*.csv")
 #Lista con los archivos .csv del directorio
 lista = lapply(temp, read.csv)
 #Fecha.hora <- lapply(lista, function(x) substr (x$Fecha.hora,1,2)) 

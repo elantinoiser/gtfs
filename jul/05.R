@@ -74,3 +74,5 @@ linea1.1.2 = linea1.1.2 %>% sf::st_set_crs(4326) %>% sf::st_transform(32214)
 linea1.1.2
 
 plot(sf::st_multilinestring(list(linea1.1, linea1.2)))
+
+multi <- sf::st_multilinestring(list(linea1.1, linea1.2))

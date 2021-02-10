@@ -32,10 +32,51 @@ jul.jn <- jul.jn %>% select(timestamp, vehicle, speed, x, y, cst6cdt, day, hour)
 jul.jn <- jul.jn %>% select(timestamp, vehicle, speed, x, y, cst6cdt, day, hour) %>% filter(speed!="0")
 
 
-aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=mean)
+jul.jn <- sf::st_as_sf(jul.jn, coords = c("x", "y"), crs = 4326, agr = "constant") #Convertir la base jul.jn en una con campo geométrico.
+jul.jn <- jul.jn %>% sf::st_set_crs(4326) %>% sf::st_transform(32214)
 
-aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=max)
+linea1.1<- sf::st_wrap_dateline(sf::st_sfc(sf::st_linestring(rbind(c(-99.1691, 19.2793),c(-99.1700, 19.2803), c(-99.1755, 19.2837), c(-99.1744, 19.2883), c(-99.1773, 19.2925), c(-99.1812, 19.2941), c(-99.1855, 19.2994), c(-99.1860, 19.3044), c(-99.1874, 19.3146), c(-99.1884, 19.3227), c(-99.1899, 19.3408))), crs = 4326))
+linea1.1 = linea1.1 %>% sf::st_set_crs(4326) %>% sf::st_transform(32214)
 
-aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=median)
+st_buffer<-sf::st_buffer(linea1.1, 100)
+st_within<- sf::st_within(jul.jn, st_buffer, sparse = FALSE)
+jul.jn <- cbind(jul.jn, st_within)
+jul.jn<- jul.jn %>% select(timestamp, vehicle, cst6cdt, speed, day, hour, st_within, geometry) %>% filter(st_within=="TRUE")
+
+
+
+
+
+
+
+
+
+
+
+mean<- aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=mean)
+
+max<- aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=max)
+
+aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=min)
+
+
+median<- aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=median)
+
+var<- aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN=var)
+
 
 aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN = function(x) quantile(x, probs = 0.95))
+
+aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN = function(x) sd(x))
+
+aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN = function(x) summary(x))
+
+
+#Coeficiente de variacion
+
+CV <- function(x, na.rm = FALSE) {
+  sd(x, na.rm=na.rm) / mean(x, na.rm=na.rm)
+}
+
+cv<-aggregate(jul.jn$speed, list(jul.jn$day, jul.jn$hour), FUN = function(x) CV(x))
+
