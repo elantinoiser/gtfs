@@ -1,5 +1,3 @@
-#https://gist.github.com/ateucher/e2e5bd0b592f3efd6d56
-
 #Importar datos de velocidades del Metrobús y precipitaciones.
 
 
@@ -24,13 +22,6 @@ jul.gtfs.ohiiunam$ts<- as.POSIXct(paste(jul.gtfs.ohiiunam$Date, jul.gtfs.ohiiuna
 
 picacho <- jul.gtfs.ohiiunam %>% select(id, nom, day, hour, n, mean, median, max, sd, p75, prec.acum.mm, year, month, Date, ts) %>% filter(nom=="PICACH")
 
-## Make a data frame with a full series of dates from the min date to the max date
-## in the incomplete data frame
-full_dates <- seq(min(picacho$ts), max(picacho$ts), 
-                  by = "1 hour")
-full_dates <- data.frame(ts = full_dates)
-
-## Merge the complete data frame with the incomplete to fill in the dates and add 
-## NAs for missing values
-my_complete_data <- merge(full_dates, picacho, by = "ts", 
-                          all.x = TRUE)
+df <- picacho %>%
+  complete(timestamp = seq.POSIXt(min(timestamp), max(timestamp), by = "hour"), 
+          )

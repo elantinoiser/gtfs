@@ -209,4 +209,38 @@ write.csv(ago.rbind, "D:/Escritorio/gtfs.mes/ago/ago.rbind.csv")
 
 ##########################################################################
 
+ago.rbind<- read.csv("D:/Escritorio/gtfs.mes/ago/ago.rbind.csv")
 
+
+ago.rbind$year <- 2020
+ago.rbind$month <- 08
+
+ago.rbind$month <- stringr::str_pad(ago.rbind$month, width = 2, side = "left", pad = "0")
+ago.rbind$day <- stringr::str_pad(ago.rbind$day, width = 2, side = "left", pad = "0")
+
+
+ago.rbind$date <- paste(ago.rbind$year,ago.rbind$month, ago.rbind$day, sep = "-")
+ago.rbind$date <- as.POSIXct(ago.rbind$date)
+head(ago.rbind$date)
+
+ago.rbind$hour <- stringr::str_pad(ago.rbind$hour, width = 2, side = "left", pad = "0")
+ago.rbind$hour <- stringr::str_pad(ago.rbind$hour, width = 3, side = "right", pad = ":")
+ago.rbind$hour <- stringr::str_pad(ago.rbind$hour, width = 4, side = "right", pad = "0")
+ago.rbind$hour <- stringr::str_pad(ago.rbind$hour, width = 5, side = "right", pad = "0")
+
+ago.rbind$ts<- as.POSIXct(paste(ago.rbind$date, ago.rbind$hour), "CST6CDT")
+
+####################################################################################################################3
+picacho <- ago.rbind %>% select(id, nom, day, hour, n, mean, median, max, sd, p75, year, month, date, ts) %>% filter(nom=="PICACH")
+
+## First make up some mock data
+## Make a data frame with a full series of dates from the min date to the max date
+## in the incomplete data frame
+full_dates <- seq(min(picacho$ts), max(picacho$ts), 
+                  by = "1 hour")
+full_dates <- data.frame(date = full_dates)
+
+## Merge the complete data frame with the incomplete to fill in the dates and add 
+## NAs for missing values
+my_complete_data <- merge(full_dates, picacho, by = "date", 
+                          all.x = TRUE)
