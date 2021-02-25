@@ -22,6 +22,4 @@ jul.gtfs.ohiiunam$ts<- as.POSIXct(paste(jul.gtfs.ohiiunam$Date, jul.gtfs.ohiiuna
 
 picacho <- jul.gtfs.ohiiunam %>% select(id, nom, day, hour, n, mean, median, max, sd, p75, prec.acum.mm, year, month, Date, ts) %>% filter(nom=="PICACH")
 
-df <- picacho %>%
-  complete(timestamp = seq.POSIXt(min(timestamp), max(timestamp), by = "hour"), 
-          )
+
