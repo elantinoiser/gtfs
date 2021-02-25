@@ -1,4 +1,5 @@
 #http://postgis.net/workshops/postgis-intro/index.html
+#https://gist.github.com/ateucher/e2e5bd0b592f3efd6d56
 
 buffer<- sf::read_sf("D:/Escritorio/estaciones.ohiiunam/buffer.shp")
 
